@@ -1,0 +1,9 @@
+<section class="game-container">
+  <div class="card" *ngFor="let card of cards" [class.flipped]="card.flipped || card.matched" (click)="onCardClick(card)">
+    <div class="card-inner">
+      <div class="card-front">❓</div>
+      <div class="card-back">{{ card.content }}</div>
+    </div>
+  </div>
+</section>
+<button (click)="restart()">🔁 Restart</button>

@@ -1,0 +1,16 @@
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(145deg, #f0f4ff, #ffffff);
+  min-height: 100vh;
+  color: #333;
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    color: #2b2b2b;
+  }
+}
