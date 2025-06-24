@@ -1,9 +1,77 @@
-<section class="game-container">
-  <div class="card" *ngFor="let card of cards" [class.flipped]="card.flipped || card.matched" (click)="onCardClick(card)">
-    <div class="card-inner">
-      <div class="card-front">❓</div>
-      <div class="card-back">{{ getCardContent(card) }}</div>
+<div class="game-wrapper">
+  <!-- Victory Modal -->
+  <div class="victory-overlay" [class.active]="showVictory">
+    <div class="victory-content">
+      <div class="victory-icon">🎉</div>
+      <h2>Victory!</h2>
+      <div class="score-display">
+        <div class="score-item">
+          <span class="score-label">Score</span>
+          <span class="score-value">{{ finalScore }}</span>
+        </div>
+        <div class="score-item">
+          <span class="score-label">Flips</span>
+          <span class="score-value">{{ totalFlips }}</span>
+        </div>
+        <div class="score-item">
+          <span class="score-label">Combo</span>
+          <span class="score-value">{{ comboStreak }}x</span>
+        </div>
+      </div>
+      <button class="play-again-btn" (click)="restart()">Play Again</button>
     </div>
   </div>
-</section>
-<button (click)="restart()">🔁 Restart</button>
+
+  <!-- Penalty Overlay -->
+  <div class="penalty-overlay" [class.active]="penaltyActive">
+    <div class="penalty-content">
+      <div class="penalty-icon">⏰</div>
+      <h2>Too Fast!</h2>
+      <p>Take a breath...</p>
+      <div class="penalty-timer">{{ penaltyTimeLeft }}s</div>
+    </div>
+  </div>
+
+  <!-- Game Stats -->
+  <div class="game-stats">
+    <div class="stat-item">
+      <span class="stat-label">Flips</span>
+      <span class="stat-value">{{ totalFlips }}</span>
+    </div>
+    <div class="stat-item" [class.combo-active]="comboStreak > 0">
+      <span class="stat-label">Combo</span>
+      <span class="stat-value">{{ comboStreak }}x</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">Matches</span>
+      <span class="stat-value">{{ matchCount }}/{{ emojis.length }}</span>
+    </div>
+  </div>
+
+  <!-- Speed Indicator -->
+  <div class="speed-indicator" [class.warning]="rapidClickCount > 0">
+    <div class="speed-bar" [style.width.%]="(rapidClickCount / 3) * 100"></div>
+  </div>
+
+  <!-- Game Board -->
+  <section class="game-container" [class.penalty-blur]="penaltyActive">
+    <div
+      class="card"
+      *ngFor="let card of cards"
+      [class.flipped]="card.flipped || card.matched"
+      [class.matched]="card.matched"
+      [class.clickable]="!penaltyActive && !clickCooldown"
+      (click)="onCardClick(card)"
+    >
+      <div class="card-inner">
+        <div class="card-front">❓</div>
+        <div class="card-back">{{ getCardContent(card) }}</div>
+      </div>
+    </div>
+  </section>
+
+  <button class="restart-btn" (click)="restart()">
+    <span class="btn-icon">🔁</span>
+    <span class="btn-text">New Game</span>
+  </button>
+</div>

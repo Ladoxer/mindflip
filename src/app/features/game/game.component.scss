@@ -1,22 +1,171 @@
-.game-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-  gap: 12px;
-  max-width: 400px;
-  margin: auto;
-  padding: 20px;
+// Modern color palette
+$primary: #6366f1;
+$secondary: #8b5cf6;
+$success: #10b981;
+$warning: #f59e0b;
+$dark-bg: #0f0f23;
+$card-bg: #1a1a2e;
+$card-front: #2d2d4f;
+$text-primary: #ffffff;
+$text-secondary: #a1a1aa;
+
+// Game wrapper
+.game-wrapper {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
 }
 
+// Penalty Overlay - Static design
+.penalty-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1000;
+
+  &.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .penalty-content {
+    text-align: center;
+    background: rgba(239, 68, 68, 0.1);
+    padding: 3rem;
+    border-radius: 20px;
+    border: 2px solid rgba(239, 68, 68, 0.3);
+
+    .penalty-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #ef4444;
+      margin: 0.5rem 0;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    p {
+      font-size: 1rem;
+      color: $text-secondary;
+      margin: 1rem 0;
+    }
+
+    .penalty-timer {
+      font-size: 3rem;
+      font-weight: 800;
+      color: #f59e0b;
+      margin-top: 1rem;
+    }
+  }
+}
+
+// Game Stats - Clean cards
+.game-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+
+  .stat-item {
+    background: $card-bg;
+    padding: 1.2rem;
+    border-radius: 12px;
+    text-align: center;
+    border: 1px solid rgba(139, 92, 246, 0.2);
+
+    &.combo-active {
+      background: rgba(16, 185, 129, 0.1);
+      border-color: rgba(16, 185, 129, 0.3);
+
+      .stat-value {
+        color: $success;
+      }
+    }
+
+    .stat-label {
+      display: block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      color: $text-secondary;
+      letter-spacing: 1px;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+      display: block;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: $text-primary;
+    }
+  }
+}
+
+// Speed Indicator - Simple bar
+.speed-indicator {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  margin-bottom: 2rem;
+  overflow: hidden;
+
+  &.warning .speed-bar {
+    background: $warning;
+  }
+
+  .speed-bar {
+    height: 100%;
+    background: $primary;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+  }
+}
+
+// Game Container
+.game-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 20px;
+  border: 1px solid rgba(139, 92, 246, 0.1);
+
+  &.penalty-blur {
+    filter: blur(4px);
+    opacity: 0.5;
+  }
+}
+
+// Cards - Clean design
 .card {
-  width: 80px;
-  height: 80px;
-  perspective: 600px;
+  aspect-ratio: 1;
+  perspective: 1000px;
   cursor: pointer;
+
+  &:not(.clickable) {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
 
   .card-inner {
     width: 100%;
     height: 100%;
-    transition: transform 0.6s;
+    transition: transform 0.5s;
     transform-style: preserve-3d;
     position: relative;
   }
@@ -29,31 +178,202 @@
   .card-back {
     position: absolute;
     backface-visibility: hidden;
-    font-size: 2em;
+    font-size: 2.2rem;
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
     height: 100%;
-    border-radius: 8px;
-    background-color: #ececec;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+  }
+
+  .card-front {
+    background: $card-front;
+    border: 2px solid rgba(139, 92, 246, 0.2);
+    color: $primary;
   }
 
   .card-back {
     transform: rotateY(180deg);
-    background-color: #fff;
+    background: linear-gradient(135deg, #2d2d5f 0%, #3d3d6f 100%);
+    border: 2px solid rgba(139, 92, 246, 0.3);
+  }
+
+  &.matched {
+    .card-back {
+      background: linear-gradient(
+        135deg,
+        rgba(16, 185, 129, 0.2) 0%,
+        rgba(52, 211, 153, 0.2) 100%
+      );
+      border-color: rgba(16, 185, 129, 0.4);
+    }
   }
 }
 
-button {
-  margin: 20px auto;
-  display: block;
-  padding: 8px 16px;
+// Restart Button - Simple
+.restart-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 2rem auto 0;
+  padding: 0.875rem 2rem;
   font-size: 1rem;
-  background: #333;
+  font-weight: 600;
+  background: linear-gradient(135deg, $primary 0%, $secondary 100%);
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 30px;
   cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  .btn-icon {
+    font-size: 1.2rem;
+  }
+}
+
+// Victory Modal - Clean design
+.victory-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1000;
+  transition: opacity 0.3s ease;
+
+  &.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .victory-content {
+    text-align: center;
+    background: $card-bg;
+    padding: 3rem 4rem;
+    border-radius: 24px;
+    border: 2px solid rgba(16, 185, 129, 0.3);
+    max-width: 400px;
+
+    .victory-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: $success;
+      margin: 0 0 2rem 0;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .score-display {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      margin-bottom: 2rem;
+
+      .score-item {
+        text-align: center;
+
+        .score-label {
+          display: block;
+          font-size: 0.875rem;
+          color: $text-secondary;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin-bottom: 0.5rem;
+        }
+
+        .score-value {
+          display: block;
+          font-size: 2rem;
+          font-weight: 700;
+          color: $text-primary;
+        }
+      }
+    }
+
+    .play-again-btn {
+      padding: 1rem 3rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, $success 0%, #34d399 100%);
+      color: white;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: transform 0.2s ease;
+
+      &:active {
+        transform: scale(0.98);
+      }
+    }
+  }
+}
+
+// Responsive for victory modal
+@media (max-width: 480px) {
+  .victory-overlay {
+    .victory-content {
+      padding: 2rem;
+      margin: 1rem;
+
+      h2 {
+        font-size: 2rem;
+      }
+
+      .score-display {
+        gap: 1.5rem;
+
+        .score-value {
+          font-size: 1.5rem;
+        }
+      }
+    }
+  }
+}
+@media (max-width: 480px) {
+  .game-wrapper {
+    padding: 1rem 0.5rem;
+  }
+
+  .game-container {
+    gap: 0.75rem;
+    padding: 1rem;
+  }
+
+  .card {
+    .card-front,
+    .card-back {
+      font-size: 1.8rem;
+    }
+  }
+
+  .game-stats {
+    gap: 0.5rem;
+
+    .stat-item {
+      padding: 0.8rem;
+
+      .stat-label {
+        font-size: 0.65rem;
+      }
+
+      .stat-value {
+        font-size: 1.2rem;
+      }
+    }
+  }
 }
