@@ -1,6 +1,6 @@
 export interface Card {
   id: string;
-  content: string;
+  contentIndex: number;
   flipped: boolean;
   matched: boolean;
 }

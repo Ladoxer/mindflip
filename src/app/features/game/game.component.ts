@@ -4,13 +4,12 @@ import { v4 as uuid } from 'uuid';
 import { LocalStorageService } from '../../services/local-storage.service';
 import { CommonModule } from '@angular/common';
 
-
 @Component({
   standalone: true,
   imports: [CommonModule],
   selector: 'app-game',
   templateUrl: './game.component.html',
-  styleUrls: ['./game.component.scss']
+  styleUrls: ['./game.component.scss'],
 })
 export class GameComponent implements OnInit {
   cards: Card[] = [];
@@ -18,6 +17,7 @@ export class GameComponent implements OnInit {
   matchCount = 0;
   totalFlips = 0;
   emojis = ['🐶', '🐱', '🦊', '🐻', '🐼', '🦁', '🐷', '🐸'];
+  private emojiMap: Map<number, string> = new Map();
 
   constructor(private storage: LocalStorageService) {}
 
@@ -26,16 +26,42 @@ export class GameComponent implements OnInit {
   }
 
   initGame() {
-    const deck = [...this.emojis, ...this.emojis].map(content => ({
+    this.createEmojiMapping();
+
+    // Create pairs of indices (0-7, 0-7)
+    const indices = [];
+    for (let i = 0; i < this.emojis.length; i++) {
+      indices.push(i, i);
+    }
+
+    // Shuffle and create cards with indices only
+    const shuffledIndices = indices.sort(() => Math.random() - 0.5);
+
+    this.cards = shuffledIndices.map((index) => ({
       id: uuid(),
-      content,
+      contentIndex: index,
       flipped: false,
-      matched: false
+      matched: false,
     }));
 
-    this.cards = deck.sort(() => Math.random() - 0.5);
     this.matchCount = 0;
     this.totalFlips = 0;
+    this.flippedCards = [];
+  }
+
+  private createEmojiMapping() {
+    const shuffledEmojis = [...this.emojis].sort(() => Math.random() - 0.5);
+    this.emojiMap.clear();
+    shuffledEmojis.forEach((emoji, index) => {
+      this.emojiMap.set(index, emoji);
+    });
+  }
+
+  getCardContent(card: Card): string {
+    if (!card.flipped && !card.matched) {
+      return '❓';
+    }
+    return this.emojiMap.get(card.contentIndex) || '❓';
   }
 
   onCardClick(card: Card) {
@@ -53,7 +79,7 @@ export class GameComponent implements OnInit {
   checkMatch() {
     const [a, b] = this.flippedCards;
 
-    if (a.content === b.content) {
+    if (a.contentIndex === b.contentIndex) {
       a.matched = b.matched = true;
       this.matchCount++;
     } else {
